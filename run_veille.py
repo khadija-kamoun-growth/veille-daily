@@ -22,7 +22,7 @@ RECIPIENT = GMAIL_USER
 GMAIL_APP_PASSWORD = os.environ["GMAIL_APP_PASSWORD"]
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 
-MODEL = "claude-opus-4-7"
+MODEL = "claude-sonnet-4-6"
 
 SYSTEM_PROMPT = """You are Khadija Kamoun's veille assistant. Your job is to produce a compact daily HTML email brief of the most viral LinkedIn posts at the AI × growth marketing × digital marketing intersection.
 
