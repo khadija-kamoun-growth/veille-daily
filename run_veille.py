@@ -21,7 +21,7 @@ RECIPIENT = GMAIL_USER
 GMAIL_APP_PASSWORD = os.environ["GMAIL_APP_PASSWORD"]
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 
-MODEL = "claude-sonnet-4-6"
+MODEL = "claude-haiku-4-5"
 
 BRIEF_SYSTEM = """You produce Khadija's veille brief: viral LinkedIn posts at the AI × growth marketing × digital marketing intersection.
 
@@ -76,7 +76,7 @@ def call_brief(client: Anthropic, today: str) -> dict:
         model=MODEL,
         max_tokens=3500,
         system=BRIEF_SYSTEM,
-        tools=[{"type": "web_search_20250305", "name": "web_search", "max_uses": 4}],
+        tools=[{"type": "web_search_20250305", "name": "web_search", "max_uses": 2}],
         messages=[{
             "role": "user",
             "content": (
