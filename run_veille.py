@@ -9,14 +9,15 @@ import json
 import time
 import smtplib
 import ssl
-import mimetypes
 from datetime import date
-from pathlib import Path
 from email.message import EmailMessage
 from anthropic import Anthropic
 
-import carousel_gen
-import thumbnail_gen
+# Visual assets (PDF carousel + PNG thumbnail) are generated via
+# carousel_gen.py and thumbnail_gen.py — currently NOT called from the pipeline.
+# See /Users/khadijakamoun/Desktop/khadija-second-brain/personal-brand-brain/
+# projets/veille-daily/carousel_skill/ for the real playbook template; daily
+# auto-generation requires a proper Jinja2 + WeasyPrint rebuild (planned).
 
 GMAIL_USER = os.environ.get("GMAIL_USER", "kamoun@digigram.com")
 RECIPIENT = GMAIL_USER
@@ -151,46 +152,17 @@ def build_html(today: str, angles_data: dict, pack: dict) -> str:
 </html>"""
 
 
-def send_email(html: str, subject: str, attachments: list[str] = None):
+def send_email(html: str, subject: str):
     msg = EmailMessage()
     msg["From"] = GMAIL_USER
     msg["To"] = RECIPIENT
     msg["Subject"] = subject
     msg.set_content("HTML-capable client required.")
     msg.add_alternative(html, subtype="html")
-    for path in attachments or []:
-        p = Path(path)
-        if not p.exists():
-            continue
-        ctype, _ = mimetypes.guess_type(str(p))
-        maintype, subtype = (ctype.split("/", 1) if ctype else ("application", "octet-stream"))
-        with open(p, "rb") as f:
-            msg.add_attachment(f.read(), maintype=maintype, subtype=subtype, filename=p.name)
     ctx = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ctx) as s:
         s.login(GMAIL_USER, GMAIL_APP_PASSWORD)
         s.send_message(msg)
-
-
-def _extract_hook(post_text: str) -> str:
-    """Pull the first punchy line from the post (the hook)."""
-    for line in post_text.strip().split("\n"):
-        line = line.strip()
-        if line and not line.startswith("#"):
-            return line[:80]
-    return post_text[:80]
-
-
-def _accent_word(hook: str) -> str:
-    """Pick a word to highlight in coral (last word with uppercase or a strong keyword)."""
-    candidates = ["DEAD", "DYING", "OVER", "WRONG", "STOP", "NEW", "AI", "GROWTH", "WINS", "BROKEN"]
-    up = hook.upper()
-    for c in candidates:
-        if c in up.split():
-            return c
-    # fallback: last word
-    words = hook.strip().rstrip(".!?").split()
-    return words[-1] if words else ""
 
 
 def main():
@@ -208,24 +180,9 @@ def main():
     print("Call 2: content pack...")
     pack = call_pack(client, chosen["title"], angles["chosen_reason"])
 
-    # Generate PDF carousel + PNG thumbnail
-    pdf_path = f"/tmp/carousel-{today}.pdf"
-    png_path = f"/tmp/thumbnail-{today}.png"
-    try:
-        print("Rendering carousel PDF...")
-        carousel_gen.build_pdf(pack["carrousel"], chosen["title"], pdf_path)
-        print("Rendering thumbnail PNG...")
-        hook = _extract_hook(pack["post"])
-        thumbnail_gen.build_thumbnail(hook, accent_word=_accent_word(hook), output_path=png_path)
-    except Exception as e:
-        print(f"WARN: asset render failed: {e}")
-        pdf_path = None
-        png_path = None
-
     html = build_html(today, angles, pack)
-    attachments = [p for p in [pdf_path, png_path] if p]
-    print(f"HTML: {len(html)} chars · attachments: {len(attachments)}")
-    send_email(html, f"Veille Khadija — {today}", attachments=attachments)
+    print(f"HTML: {len(html)} chars")
+    send_email(html, f"Veille Khadija — {today}")
     print("Sent.")
 
 

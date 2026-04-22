@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Signal-Based Inbound Playbook, Khadija Kamoun</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+
+  @page {
+    size: 1080px 1350px;
+    margin: 0;
+  }
+
+  :root {
+    --primary: #4E33F1;
+    --secondary: #FF575A;
+    --aux1: #9281FD;
+    --aux2: #F8A2B6;
+    --apollo: #E84A39;
+    --ink: #16122E;
+    --ink-soft: #4B4766;
+    --muted: #8A83A5;
+    --bg: #F6F4FF;
+    --bg-soft: #FDFCFF;
+    --card: #FFFFFF;
+    --border: rgba(78, 51, 241, 0.14);
+    --border-soft: rgba(22, 18, 46, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    width: 1080px;
+    height: 1350px;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+    background:
+      radial-gradient(ellipse 80% 60% at 100% 0%, rgba(146, 129, 253, 0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 0% 100%, rgba(255, 87, 90, 0.10) 0%, transparent 55%),
+      var(--bg);
+    padding: 80px 84px;
+    display: flex;
+    flex-direction: column;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 56px;
+  }
+  .identity { display: flex; align-items: center; gap: 14px; }
+  .avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--aux1) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800; font-size: 18px;
+    color: #fff;
+    letter-spacing: -0.5px;
+    box-shadow: 0 6px 20px rgba(78, 51, 241, 0.25);
+    flex-shrink: 0;
+  }
+  .name-wrap { display: flex; align-items: center; gap: 8px; }
+  .name {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; font-size: 20px;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+  }
+  .verified {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+  }
+  .part-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; font-size: 16px;
+    color: var(--secondary);
+    letter-spacing: 0.5px;
+  }
+  .part-label span { color: var(--ink-soft); font-weight: 500; }
+  .brand-mark {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(22, 18, 46, 0.12);
+    overflow: hidden;
+  }
+  .brand-mark img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 14px;
+  }
+
+  /* Apollo logo (inline SVG wrapper) */
+  .apollo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    background: #FFFFFF;
+    border: 1px solid var(--border-soft);
+    border-radius: 999px;
+    box-shadow: 0 4px 14px rgba(22, 18, 46, 0.05);
+  }
+  .apollo-mark {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--apollo);
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: -1.5px;
+  }
+  .apollo-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--ink);
+    letter-spacing: -0.4px;
+  }
+  .apollo-text .dot { color: var(--apollo); }
+
+  /* Content */
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+  }
+  .footer-logo {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px rgba(22, 18, 46, 0.08);
+  }
+  .footer-logo img {
+    width: 100%; height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  /* New pill wordmark footer logo */
+  .footer-pill {
+    display: inline-block;
+    height: 48px;
+    background: #FFFFFF;
+    border-radius: 999px;
+    padding: 0 18px 0 0;
+    box-shadow: 0 6px 18px rgba(22, 18, 46, 0.10);
+    position: relative;
+    vertical-align: middle;
+    white-space: nowrap;
+    line-height: 48px;
+  }
+  .footer-pill .fp-photo {
+    display: inline-block;
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    border: 3px solid var(--secondary);
+    overflow: hidden;
+    background: var(--primary);
+    vertical-align: middle;
+    margin-left: -3px;
+    margin-right: 10px;
+    margin-top: -3px;
+    box-sizing: border-box;
+  }
+  .footer-pill .fp-photo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .footer-pill .fp-text {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+  }
+  .footer-pill .fp-text .fp-l1,
+  .footer-pill .fp-text .fp-l2 {
+    display: block;
+    font-size: 15px;
+    color: var(--primary);
+    letter-spacing: -0.4px;
+  }
+  .footer-pill .fp-text .fp-l1 { margin-bottom: 2px; }
+  .footer-pill .fp-text .fp-l2 em {
+    color: var(--secondary);
+    font-style: normal;
+  }
+  .close-page .footer-pill {
+    box-shadow: 0 10px 28px rgba(0,0,0,0.2);
+  }
+  .apollo-logo-cover {
+    display: block;
+    width: 300px;
+    height: auto;
+    margin-top: 4px;
+  }
+  .apollo-powered {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    margin-top: 22px;
+  }
+  /* Cover hook — editorial + kinetic typography */
+  .cover h1.hook {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 72px;
+    letter-spacing: -2.4px;
+    line-height: 0.96;
+    margin: 18px 0 18px 0 !important;
+    display: block;
+    color: var(--ink);
+  }
+  .cover h1.hook .accent {
+    color: #FF575A;
+    background: transparent;
+    position: relative;
+  }
+  .cover h1.hook .accent::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 4px;
+    height: 8px;
+    background: #FF575A;
+    opacity: 0.18;
+    z-index: -1;
+    border-radius: 2px;
+  }
+  .cover h1.hook .accent2 {
+    color: #4E33F1;
+    background: transparent;
+    position: relative;
+  }
+  .cover h1.hook .accent2::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 4px;
+    height: 8px;
+    background: #4E33F1;
+    opacity: 0.16;
+    z-index: -1;
+    border-radius: 2px;
+  }
+  .cover .tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0 0 18px 0 !important;
+    max-width: 480px;
+    display: block;
+    color: var(--muted);
+  }
+  .cover .cover-badge {
+    align-self: flex-start;
+    margin-bottom: 0;
+  }
+  .cover .apollo-powered {
+    margin-top: 32px;
+  }
+  /* stat bar — kinetic + trust authority */
+  .cover-stats {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+    max-width: 520px;
+  }
+  .cover-stat {
+    flex: 1;
+    background: #FFFFFF;
+    border: 1px solid var(--border-soft);
+    border-left: 3px solid var(--secondary);
+    padding: 12px 14px;
+    border-radius: 4px 14px 14px 4px;
+    box-shadow: 0 4px 14px rgba(22, 18, 46, 0.06);
+  }
+  .cover-stat:nth-child(2) { border-left-color: var(--primary); }
+  .cover-stat:nth-child(3) { border-left-color: var(--aux1); }
+  .cover-stat .v {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--ink);
+    display: block;
+    line-height: 1;
+  }
+  .cover-stat .l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 4px;
+    display: block;
+  }
+  /* credential chip under title */
+  .cover-credential {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    padding: 8px 16px 8px 8px;
+    background: var(--ink);
+    color: #FFFFFF;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .cover-credential .cred-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--secondary);
+    display: inline-block;
+  }
+  .cover-credential em {
+    font-style: normal;
+    color: var(--secondary);
+  }
+  .apollo-powered .powered-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 2.5px;
+    font-weight: 700;
+  }
+
+  /* Cover portrait photo slot — BIG rectangular bait photo */
+  .cover-hero .photo-portrait {
+    width: 420px;
+    height: auto;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    display: block;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+    box-shadow: none;
+  }
+  .cover-hero .photo-portrait img {
+    width: 420px;
+    height: auto;
+    display: block;
+    border-radius: 0;
+  }
+  /* EP badge on cover/close */
+  .ep-badge {
+    position: absolute;
+    bottom: 88px;
+    left: 56px;
+    background: var(--primary);
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 2px;
+    box-shadow: 0 10px 28px rgba(78, 51, 241, 0.35);
+    z-index: 4;
+  }
+  .apollo-logo-inline {
+    display: inline-block;
+    height: 22px;
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+  .swipe {
+    border: 1.5px solid var(--secondary);
+    color: var(--secondary);
+    padding: 8px 22px;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; font-size: 14px;
+    letter-spacing: 1px;
+  }
+  .page-num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    font-size: 16px; font-weight: 600;
+  }
+
+  /* Typography */
+  h1.hook {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 100px;
+    line-height: 1.02;
+    letter-spacing: -3px;
+    color: var(--ink);
+    margin-top: 30px;
+  }
+  h1.hook .accent { color: var(--secondary); }
+  h1.hook .accent2 { color: var(--primary); }
+
+  h2.title {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 76px;
+    line-height: 1.04;
+    letter-spacing: -2.2px;
+    color: var(--ink);
+  }
+  h2.title .accent { color: var(--secondary); }
+  h2.title .accent2 { color: var(--primary); }
+
+  h3.step-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 30px;
+    color: var(--secondary);
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+  h3.step-label .txt { color: var(--ink); }
+
+  .subtitle {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 26px;
+    color: var(--ink-soft);
+    margin-top: 24px;
+    line-height: 1.4;
+  }
+
+  .big-lead {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 28px;
+    color: var(--ink-soft);
+    margin-top: 30px;
+    line-height: 1.45;
+    max-width: 820px;
+  }
+
+  /* Cover specifics */
+  .cover .content { justify-content: space-between; padding-top: 30px; }
+  .cover-top { }
+  .cover-badge {
+    display: inline-block;
+    padding: 10px 22px 10px 36px;
+    background: rgba(78, 51, 241, 0.08);
+    border: 1px solid rgba(78, 51, 241, 0.2);
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--primary);
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 36px;
+    position: relative;
+  }
+  .cover-badge .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--secondary);
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    margin-top: -4px;
+  }
+  .cover-badge-wrap {
+    display: block;
+    margin-bottom: 0;
+  }
+  .tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 24px;
+    color: var(--ink-soft);
+    margin-top: 40px;
+    font-weight: 500;
+  }
+  .tagline .dot { color: var(--secondary); font-weight: 700; }
+
+  .apollo-powered {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 52px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* TOC */
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 26px;
+    margin-top: 60px;
+  }
+  .toc-item {
+    background: var(--card);
+    border: 1px solid var(--border-soft);
+    border-radius: 22px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(22, 18, 46, 0.04);
+  }
+  .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--secondary);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .toc-item h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 28px;
+    margin-bottom: 10px;
+    letter-spacing: -0.8px;
+    color: var(--ink);
+  }
+  .toc-item p {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+
+  /* Part divider */
+  .divider-page .content { align-items: center; text-align: center; }
+  .divider-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    color: var(--primary);
+    letter-spacing: 4px;
+    font-weight: 700;
+    margin-bottom: 36px;
+  }
+  .divider-page h2.title {
+    font-size: 160px;
+    line-height: 0.95;
+    letter-spacing: -5px;
+    text-align: center;
+  }
+  .divider-page .title .accent { color: var(--secondary); display: block;}
+  .divider-page .pages-range {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink-soft);
+    font-size: 18px;
+    margin-top: 44px;
+    letter-spacing: 1px;
+  }
+
+  /* Apollo UI mockups (light, realistic) */
+  .apollo-ui {
+    background: var(--card);
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    margin-top: 36px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(22, 18, 46, 0.08);
+  }
+  .apollo-ui-bar {
+    display: flex;
+    align-items: center;
+    padding: 14px 22px;
+    background: #F8F7FB;
+    border-bottom: 1px solid var(--border-soft);
+    gap: 8px;
+  }
+  .apollo-ui-bar .dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #E3E1EB;
+  }
+  .apollo-ui-bar .dot:nth-child(1) { background: #FF5F56; }
+  .apollo-ui-bar .dot:nth-child(2) { background: #FFBD2E; }
+  .apollo-ui-bar .dot:nth-child(3) { background: #27C93F; }
+  .apollo-ui-bar .url {
+    margin-left: 18px;
+    padding: 6px 14px;
+    background: #FFFFFF;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .apollo-ui-bar .url .apollo-dot { color: var(--apollo); }
+
+  .apollo-ui-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .apollo-ui-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--ink);
+  }
+  .apollo-ui-title .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--apollo);
+  }
+  .apollo-ui-tabs {
+    display: flex;
+    gap: 6px;
+  }
+  .apollo-tab {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    padding: 7px 14px;
+    border-radius: 8px;
+  }
+  .apollo-tab.active {
+    background: rgba(232, 74, 57, 0.10);
+    color: var(--apollo);
+  }
+  .apollo-ui-body {
+    padding: 26px 28px;
+  }
+
+  /* Apollo KPIs */
+  .apollo-kpis {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  .apollo-kpi {
+    background: #F8F7FB;
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .apollo-kpi .label {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .apollo-kpi .val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 28px;
+    color: var(--ink);
+    letter-spacing: -1px;
+  }
+  .apollo-kpi .delta {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #1FAF6D;
+    margin-left: 8px;
+    font-weight: 700;
+    vertical-align: middle;
+  }
+
+  .apollo-table-head {
+    display: grid;
+    grid-template-columns: 40px 1fr 120px 100px 120px;
+    gap: 14px;
+    padding: 10px 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .apollo-row {
+    display: grid;
+    grid-template-columns: 40px 1fr 120px 100px 120px;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 8px;
+    border-bottom: 1px dashed var(--border-soft);
+  }
+  .apollo-row:last-child { border-bottom: none; }
+  .co-logo {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--aux1), var(--primary));
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 13px;
+  }
+  .co-logo.c2 { background: linear-gradient(135deg, #22C55E, #0EA5E9); }
+  .co-logo.c3 { background: linear-gradient(135deg, #F59E0B, #EF4444); }
+  .co-logo.c4 { background: linear-gradient(135deg, #8B5CF6, #EC4899); }
+  .co-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .co-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .visits {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .apollo-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-align: center;
+    justify-self: start;
+  }
+  .apollo-tag.hot { background: rgba(232, 74, 57, 0.12); color: var(--apollo); }
+  .apollo-tag.warm { background: rgba(78, 51, 241, 0.12); color: var(--primary); }
+  .apollo-tag.cold { background: rgba(22, 18, 46, 0.06); color: var(--muted); }
+  .score-bar {
+    position: relative;
+    height: 6px;
+    background: #EEECF5;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .score-bar .fill {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    background: linear-gradient(90deg, var(--apollo), var(--secondary));
+    border-radius: 999px;
+  }
+
+  /* Flow diagrams */
+  .flow {
+    margin-top: 32px;
+    background: var(--card);
+    border: 1px solid var(--border-soft);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 12px 40px rgba(22, 18, 46, 0.05);
+  }
+  .flow-node {
+    background: #FFFFFF;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .flow-node.hot { border-color: rgba(232, 74, 57, 0.5); background: rgba(232, 74, 57, 0.04); }
+  .flow-node.primary { border-color: var(--primary); background: rgba(78, 51, 241, 0.06); }
+  .flow-node .ico {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: rgba(78, 51, 241, 0.1);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--primary);
+    font-weight: 800;
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+  }
+  .flow-node.hot .ico { background: rgba(232,74,57,0.12); color: var(--apollo); }
+  .flow-node.primary .ico { background: var(--primary); color: white;}
+  .flow-node .sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .flow-arrow {
+    height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted);
+    font-size: 20px;
+  }
+  .flow-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin: 6px 0;
+  }
+
+  .tip-box {
+    margin-top: 36px;
+    padding: 26px 30px;
+    background: rgba(232, 74, 57, 0.06);
+    border-left: 4px solid var(--apollo);
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .tip-box .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    color: var(--apollo);
+    margin-right: 8px;
+    letter-spacing: 0.3px;
+  }
+
+  /* Apollo Form mock (actual Apollo play style) */
+  .forms-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin-top: 40px;
+  }
+  .form-card {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 10px 36px rgba(22, 18, 46, 0.05);
+  }
+  .form-card.bad { border: 1.5px solid rgba(232, 74, 57, 0.30); }
+  .form-card.good { border: 1.5px solid rgba(78, 51, 241, 0.45); }
+  .form-card h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    margin-bottom: 18px;
+    letter-spacing: 0.3px;
+    font-weight: 800;
+  }
+  .form-card.bad h5 { color: var(--apollo); }
+  .form-card.good h5 { color: var(--primary); }
+  .form-field {
+    background: #F8F7FB;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 9px 14px;
+    margin-bottom: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .form-field.filled {
+    color: var(--primary);
+    background: rgba(78, 51, 241, 0.08);
+    border-color: rgba(78, 51, 241, 0.25);
+  }
+  .form-field.filled::before { content: "✓ "; color: var(--primary); font-weight: 800;}
+
+  /* Bullets */
+  .bullets {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .bullets .b {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 26px 30px;
+    background: var(--card);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(22, 18, 46, 0.04);
+  }
+  .bullets .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 900;
+    color: var(--secondary);
+    font-size: 34px;
+    flex-shrink: 0;
+    min-width: 60px;
+    letter-spacing: -1px;
+  }
+  .bullets .b-content h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+  }
+  .bullets .b-content p {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* Big stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 22px;
+    margin-top: 60px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border-soft);
+    border-radius: 20px;
+    padding: 36px 28px;
+    text-align: center;
+    box-shadow: 0 10px 32px rgba(22, 18, 46, 0.04);
+  }
+  .stat-card .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 900;
+    font-size: 72px;
+    color: var(--secondary);
+    letter-spacing: -3px;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .stat-card .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--ink-soft);
+    letter-spacing: 0.3px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  /* Close page — violet gradient hero */
+  .close-page {
+    background: linear-gradient(150deg, #4E33F1 0%, #6B4FFF 40%, #8A70FF 100%);
+    color: #FFFFFF;
+    position: relative;
+    overflow: hidden;
+  }
+  .close-page .header .name { color: #FFFFFF; }
+  .close-page .header .avatar {
+    background: rgba(255,255,255,0.18);
+    color: #FFFFFF;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .close-page .header .brand-mark {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+  .close-page .header .verified path:first-child { fill: #FFFFFF; }
+  .close-page .header .verified path:last-child { stroke: var(--primary); }
+  .close-page .content {
+    justify-content: flex-start;
+    text-align: left;
+    align-items: flex-start;
+    padding-top: 30px;
+    position: relative;
+    z-index: 2;
+  }
+  .close-tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(255, 87, 90, 0.18);
+    border-radius: 999px;
+  }
+  .close-page h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 78px;
+    letter-spacing: -2.4px;
+    line-height: 0.98;
+    margin-bottom: 18px;
+    color: #FFFFFF;
+    max-width: 640px;
+  }
+  .close-page h1 .accent {
+    color: #FF8A62;
+    background: transparent;
+    position: relative;
+    display: inline-block;
+  }
+  .close-page h1 .accent::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 6px;
+    height: 10px;
+    background: #FF575A;
+    opacity: 0.22;
+    z-index: -1;
+    border-radius: 2px;
+  }
+  .close-subhook {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    color: rgba(255,255,255,0.78);
+    max-width: 560px;
+    line-height: 1.5;
+    margin-bottom: 28px;
+    font-weight: 400;
+  }
+  .close-subhook em {
+    color: #FFFFFF;
+    font-style: normal;
+    font-weight: 600;
+  }
+  /* next-episode teaser */
+  .close-next {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 26px;
+    padding: 14px 20px 14px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    max-width: 560px;
+  }
+  .close-next .next-badge {
+    background: var(--secondary);
+    color: #FFFFFF;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+  .close-next .next-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.4;
+  }
+  .close-next .next-text strong {
+    color: #FFFFFF;
+    font-weight: 700;
+  }
+  .actions {
+    margin-top: 42px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .action {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    color: #FFFFFF;
+    padding: 16px 28px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    backdrop-filter: blur(12px);
+    font-weight: 600;
+  }
+  .action.primary {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    color: #FFFFFF;
+    box-shadow: 0 12px 30px rgba(255, 87, 90, 0.35);
+  }
+  .action .arrow { color: #FFFFFF; margin-right: 14px; font-weight: 800;}
+  .action.primary .arrow { color: #FFFFFF; }
+
+  .signature {
+    margin-top: 42px;
+    font-family: 'JetBrains Mono', monospace;
+    color: rgba(255,255,255,0.85);
+    font-size: 18px;
+    letter-spacing: 0.3px;
+  }
+  .close-portrait {
+    position: absolute;
+    right: 0;
+    bottom: 100px;
+    width: 580px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .close-portrait img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 25px 50px rgba(0,0,0,0.3));
+  }
+  /* Orbit rings on close page — solar system */
+  .close-orbit {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .close-orbit.o1 {
+    width: 760px; height: 760px;
+    right: -160px; bottom: -160px;
+    border: 1.5px dashed rgba(255, 255, 255, 0.22);
+  }
+  .close-orbit.o2 {
+    width: 560px; height: 560px;
+    right: -40px; bottom: 40px;
+    border: 1.5px dashed rgba(255, 87, 90, 0.45);
+  }
+  .close-orbit.o3 {
+    width: 900px; height: 900px;
+    right: -300px; bottom: -300px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .close-planet {
+    position: absolute;
+    border-radius: 50%;
+    z-index: 2;
+  }
+  .close-planet.cp1 {
+    width: 22px; height: 22px;
+    background: var(--secondary);
+    right: 40px; top: 340px;
+  }
+  .close-planet.cp2 {
+    width: 12px; height: 12px;
+    background: #FFFFFF;
+    right: 220px; bottom: 140px;
+    opacity: 0.8;
+  }
+  .close-planet.cp3 {
+    width: 16px; height: 16px;
+    background: #FFFFFF;
+    right: 80px; bottom: 80px;
+    opacity: 0.6;
+  }
+  .close-spark {
+    position: absolute;
+    width: 70px; height: 2px;
+    background: rgba(255, 87, 90, 0.6);
+    z-index: 2;
+  }
+  .close-spark.cs1 { top: 420px; right: 60px; transform: rotate(-28deg); }
+  .close-spark.cs2 { bottom: 200px; right: -10px; transform: rotate(40deg); }
+  .close-chip {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--primary);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+    z-index: 3;
+  }
+  .close-chip.c1 { top: 34%; right: 6%; color: var(--secondary); }
+  .close-chip.c2 { top: 52%; right: 36%; color: var(--primary); }
+  .close-built {
+    margin-top: 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .close-built span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+  }
+  .close-built img {
+    height: 24px; width: auto;
+  }
+  .close-page .footer-logo {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+  .close-page .page-num { color: rgba(255,255,255,0.7); }
+
+  /* Cover big visual — split layout: text left, HUGE photo right */
+  .cover .content {
+    position: relative;
+    display: block !important;
+  }
+  .cover-split {
+    position: relative;
+    width: 100%;
+    height: 980px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  .cover-left {
+    width: 560px;
+    display: block;
+  }
+  .cover-right {
+    position: absolute;
+    right: 0;
+    top: 20px;
+    width: 420px;
+    height: 960px;
+  }
+  .cover-hero {
+    position: relative;
+    width: 420px;
+    height: 100%;
+  }
+  /* Orbit rings — solar system look around her */
+  .cover-hero .orbit-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(78, 51, 241, 0.35);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .cover-hero .orbit-ring.r1 {
+    width: 520px; height: 520px;
+    right: -60px;
+    top: 120px;
+  }
+  .cover-hero .orbit-ring.r2 {
+    width: 700px; height: 700px;
+    right: -180px;
+    top: 40px;
+    border-color: rgba(255, 87, 90, 0.28);
+  }
+  .cover-hero .orbit-ring.r3 {
+    width: 360px; height: 360px;
+    right: 40px;
+    top: 180px;
+    border: 1.2px solid rgba(146, 129, 253, 0.25);
+  }
+  /* small floating planets */
+  .cover-hero .planet {
+    position: absolute;
+    border-radius: 50%;
+    z-index: 2;
+  }
+  .cover-hero .planet.p1 {
+    width: 22px; height: 22px;
+    background: var(--secondary);
+    right: 10px; top: 90px;
+  }
+  .cover-hero .planet.p2 {
+    width: 14px; height: 14px;
+    background: var(--primary);
+    left: -20px; bottom: 220px;
+  }
+  .cover-hero .planet.p3 {
+    width: 10px; height: 10px;
+    background: var(--secondary);
+    right: -40px; top: 420px;
+  }
+  .cover-hero .planet.p4 {
+    width: 18px; height: 18px;
+    background: var(--aux1);
+    left: 40px; top: 180px;
+    opacity: 0.8;
+  }
+  /* squiggle connector lines */
+  .cover-hero .spark {
+    position: absolute;
+    width: 60px; height: 2px;
+    background: var(--secondary);
+    opacity: 0.6;
+    z-index: 2;
+  }
+  .cover-hero .spark.s1 { top: 100px; left: -30px; transform: rotate(30deg); }
+  .cover-hero .spark.s2 { bottom: 280px; right: -20px; transform: rotate(-40deg); }
+  .chip {
+    position: absolute;
+    background: #FFFFFF;
+    border: 1.5px solid var(--border-soft);
+    padding: 9px 16px;
+    border-radius: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 800;
+    letter-spacing: -0.2px;
+    box-shadow: 0 10px 28px rgba(22, 18, 46, 0.14), 0 2px 6px rgba(22, 18, 46, 0.06);
+    z-index: 4;
+    white-space: nowrap;
+  }
+  .chip .cdot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--apollo);
+    margin-right: 8px;
+    vertical-align: middle;
+    box-shadow: 0 0 0 3px rgba(244, 200, 65, 0.22);
+  }
+  .chip.c-primary { border-color: rgba(78, 51, 241, 0.35); color: var(--primary); }
+  .chip.c-primary .cdot { background: var(--primary); box-shadow: 0 0 0 3px rgba(78, 51, 241, 0.18); }
+  .chip.c-secondary { border-color: rgba(255, 87, 90, 0.4); color: var(--secondary); }
+  .chip.c-secondary .cdot { background: var(--secondary); box-shadow: 0 0 0 3px rgba(255, 87, 90, 0.22); }
+  .chip.c-ink { background: var(--ink); color: #FFFFFF; border-color: var(--ink); }
+  .chip.c-ink .cdot { background: var(--apollo); box-shadow: 0 0 0 3px rgba(244, 200, 65, 0.28); }
+  /* Chips placed around the solar system — all OUTSIDE the photo (photo starts at y≈184 x≈492) */
+  .cover-split .chip.c1 { top: 8px; left: 270px; }
+  .cover-split .chip.c2 { top: 28px; left: 560px; }
+  .cover-split .chip.c3 { top: 86px; left: 620px; }
+  .cover-split .chip.c4 { top: 138px; left: 750px; }
+  .cover-split .chip.c5 { top: 740px; left: 20px; }
+  .cover-split .chip.c6 { top: 810px; left: 190px; }
+  .cover-split .chip.c7 { top: 882px; left: 30px; }
+  .cover-split .chip.c8 { top: 945px; left: 220px; }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap">
+        <div class="name">Khadija Kamoun</div>
+        <svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <div class="cover-split">
+      <div class="cover-left">
+        <span class="cover-badge">
+          <span class="dot"></span>
+          PLAYBOOK · 01 / 06
+        </span>
+
+        <br>
+        <h1 class="hook">
+          Turn <span class="accent">anonymous</span><br>
+          traffic into<br>
+          <span class="accent2">real pipeline.</span>
+        </h1>
+
+        <div class="tagline">A signal, based inbound system. Built in Apollo.<br>The exact stack I use to close faster, with less noise.</div>
+
+        <div class="cover-stats">
+          <div class="cover-stat">
+            <span class="v">&gt;20%</span>
+            <span class="l">signal → meeting</span>
+          </div>
+          <div class="cover-stat">
+            <span class="v">&lt;5m</span>
+            <span class="l">inbound response</span>
+          </div>
+          <div class="cover-stat">
+            <span class="v">1h</span>
+            <span class="l">weekly prospecting</span>
+          </div>
+        </div>
+
+        <div class="apollo-powered">
+          <span class="powered-label">POWERED BY</span>
+          <img src="assets/apollo-logo.png" alt="Apollo.io" class="apollo-logo-cover">
+        </div>
+      </div>
+
+      <div class="cover-right">
+        <div class="cover-hero">
+          <div class="orbit-ring r2"></div>
+          <div class="orbit-ring r1"></div>
+          <div class="orbit-ring r3"></div>
+          <div class="planet p1"></div>
+          <div class="planet p2"></div>
+          <div class="planet p3"></div>
+          <div class="planet p4"></div>
+          <div class="spark s1"></div>
+          <div class="spark s2"></div>
+          <div class="photo-portrait">
+            <img src="assets/cover-raw.png" alt="Khadija Kamoun">
+          </div>
+        </div>
+      </div>
+
+      <!-- Keyword chips orbiting around the solar system, all off the photo -->
+      <div class="chip c1"><span class="cdot"></span>website.visit</div>
+      <div class="chip c2 c-secondary"><span class="cdot"></span>signal.detected</div>
+      <div class="chip c3 c-primary"><span class="cdot"></span>high_intent</div>
+      <div class="chip c4"><span class="cdot"></span>ICP match</div>
+      <div class="chip c5 c-ink"><span class="cdot"></span>enrich()</div>
+      <div class="chip c6 c-secondary"><span class="cdot"></span>follow.up</div>
+      <div class="chip c7"><span class="cdot"></span>reply &lt; 5m</div>
+      <div class="chip c8 c-primary"><span class="cdot"></span>meeting.booked</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">1</div>
+  </div>
+</div>
+
+<!-- PAGE 2: TOC -->
+<div class="page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <h2 class="title">In this<br>playbook, <span class="accent">you'll learn:</span></h2>
+
+    <div class="toc-grid">
+      <div class="toc-item">
+        <div class="toc-num">01</div>
+        <h4>Read the signals</h4>
+        <p>Reveal which companies are already on your site.</p>
+      </div>
+      <div class="toc-item">
+        <div class="toc-num">02</div>
+        <h4>Qualify fast</h4>
+        <p>Let rules, not reps, filter inbound.</p>
+      </div>
+      <div class="toc-item">
+        <div class="toc-num">03</div>
+        <h4>Route smart</h4>
+        <p>Right lead, right rep, in seconds.</p>
+      </div>
+      <div class="toc-item">
+        <div class="toc-num">04</div>
+        <h4>Automate</h4>
+        <p>Workflows that run while you sleep.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">2</div>
+  </div>
+</div>
+
+<!-- PAGE 3: PART 1 DIVIDER -->
+<div class="page divider-page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <div class="divider-label">PART · 01</div>
+    <h2 class="title">
+      <span class="accent">The shift</span>
+    </h2>
+    <div class="pages-range">Pages 4, 5</div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">3</div>
+  </div>
+</div>
+
+<!-- PAGE 4: THE PROBLEM -->
+<div class="page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="part-label">Part 1<span> · The shift</span></div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <h2 class="title">
+      Most teams still<br>
+      play the <span class="accent">forms game.</span>
+    </h2>
+
+    <div class="big-lead">That's why they leak 95% of their real buying intent.</div>
+
+    <div class="apollo-ui">
+      <div class="apollo-ui-bar">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="url">apollo<span class="apollo-dot">.</span>io/website, visitors</div>
+      </div>
+      <div class="apollo-ui-body" style="padding: 30px;">
+        <div class="apollo-kpis">
+          <div class="apollo-kpi">
+            <div class="label">FORM CONVERSION</div>
+            <div class="val">2, 3%</div>
+          </div>
+          <div class="apollo-kpi">
+            <div class="label">ANONYMOUS TRAFFIC</div>
+            <div class="val">95%+</div>
+          </div>
+          <div class="apollo-kpi">
+            <div class="label">VISIBLE TO YOU</div>
+            <div class="val">&lt;5%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <span class="lbl">TAKEAWAY:</span> Scale isn't about collecting more forms. It's about seeing who's already watching.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">4</div>
+  </div>
+</div>
+
+<!-- PAGE 5: THE SHIFT -->
+<div class="page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="part-label">Part 1<span> · The shift</span></div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <h2 class="title">
+      From <span class="accent">form fills</span><br>
+      to <span class="accent2">signals.</span>
+    </h2>
+
+    <div class="bullets">
+      <div class="b">
+        <div class="num">01</div>
+        <div class="b-content">
+          <h5>Anonymous visits</h5>
+          <p>Reverse IP reveals which companies are on your pages. I personally use Leadfeeder for this.</p>
+        </div>
+      </div>
+      <div class="b">
+        <div class="num">02</div>
+        <div class="b-content">
+          <h5>Page, level intent</h5>
+          <p>Pricing &gt; blog. The URL tells you where they are in the funnel.</p>
+        </div>
+      </div>
+      <div class="b">
+        <div class="num">03</div>
+        <div class="b-content">
+          <h5>Return velocity</h5>
+          <p>Three visits in a week = a buying committee doing research.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">5</div>
+  </div>
+</div>
+
+<!-- PAGE 6: PART 2 DIVIDER -->
+<div class="page divider-page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <div class="divider-label">PART · 02</div>
+    <h2 class="title">
+      The <span class="accent">workflow.</span>
+    </h2>
+    <div class="pages-range">Pages 7, 11</div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">6</div>
+  </div>
+</div>
+
+<!-- PAGE 7: STEP 1, IDENTIFY -->
+<div class="page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="part-label">Step 01<span> · Identify</span></div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <h2 class="title">Turn on <span class="accent">visitor intelligence.</span></h2>
+    <div class="subtitle">Make anonymous traffic addressable in Apollo.</div>
+
+    <div class="apollo-ui">
+      <div class="apollo-ui-header">
+        <div class="apollo-ui-title">
+          <img src="assets/apollo-logo.png" alt="Apollo" style="height: 22px; width: auto;">
+          <span style="color: var(--muted); font-weight: 500; font-size: 14px; margin: 0 10px;">/</span>
+          Website Visitors
+        </div>
+        <div class="apollo-ui-tabs">
+          <div class="apollo-tab active">Companies</div>
+          <div class="apollo-tab">People</div>
+          <div class="apollo-tab">Pages</div>
+        </div>
+      </div>
+      <div class="apollo-ui-body">
+        <div class="apollo-kpis">
+          <div class="apollo-kpi"><div class="label">VISITS (90D)</div><div class="val">3,112<span class="delta">↑ 38%</span></div></div>
+          <div class="apollo-kpi"><div class="label">UNIQUE</div><div class="val">1,816</div></div>
+          <div class="apollo-kpi"><div class="label">COMPANIES</div><div class="val">1,093</div></div>
+        </div>
+
+        <div class="apollo-table-head">
+          <div>#</div><div>COMPANY</div><div>VISITS</div><div>SCORE</div><div>STATUS</div>
+        </div>
+        <div class="apollo-row">
+          <div style="font-family: 'JetBrains Mono'; color: var(--muted); font-size: 13px;">01</div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="co-logo">AC</div>
+            <div><div class="co-name">Acme Corp</div><div class="co-sub">pricing · /enterprise · 5 pages</div></div>
+          </div>
+          <div class="visits">22</div>
+          <div class="score-bar"><div class="fill" style="width: 92%;"></div></div>
+          <div class="apollo-tag hot">HIGH INTENT</div>
+        </div>
+        <div class="apollo-row">
+          <div style="font-family: 'JetBrains Mono'; color: var(--muted); font-size: 13px;">02</div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="co-logo c2">GL</div>
+            <div><div class="co-name">Globex Inc</div><div class="co-sub">demo · case studies</div></div>
+          </div>
+          <div class="visits">14</div>
+          <div class="score-bar"><div class="fill" style="width: 74%;"></div></div>
+          <div class="apollo-tag warm">ICP MATCH</div>
+        </div>
+        <div class="apollo-row">
+          <div style="font-family: 'JetBrains Mono'; color: var(--muted); font-size: 13px;">03</div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="co-logo c3">VM</div>
+            <div><div class="co-name">Vertex Media</div><div class="co-sub">return visit · day 4</div></div>
+          </div>
+          <div class="visits">9</div>
+          <div class="score-bar"><div class="fill" style="width: 55%;"></div></div>
+          <div class="apollo-tag warm">RETURN</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">7</div>
+  </div>
+</div>
+
+<!-- PAGE 8: STEP 2, QUALIFY -->
+<div class="page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="part-label">Step 02<span> · Qualify</span></div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <h2 class="title">Build your <span class="accent">ICP filter.</span></h2>
+    <div class="subtitle">Rules do the sorting. Not reps.</div>
+
+    <div class="flow">
+      <div class="flow-node primary">
+        <div class="ico">⚡</div>
+        <div>Visitor lands · enrichment runs in 2s</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-split">
+        <div class="flow-node primary">
+          <div class="ico">✓</div>
+          <div>ICP match<div class="sub">revenue, role, geo</div></div>
+        </div>
+        <div class="flow-node">
+          <div class="ico">×</div>
+          <div>Not a fit<div class="sub">monitor only</div></div>
+        </div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-node hot">
+        <div class="ico">🔥</div>
+        <div>High score · pricing + 3 return visits</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <span class="lbl">TIP:</span> Score on behavior + firmographics. A Fortune 500 on your blog ≠ one on your pricing.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">8</div>
+  </div>
+</div>
+
+<!-- PAGE 9: STEP 3, ROUTE -->
+<div class="page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="part-label">Step 03<span> · Route</span></div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <h2 class="title">Smart routing.<br><span class="accent">No guesswork.</span></h2>
+    <div class="subtitle">Right lead, right rep, in seconds.</div>
+
+    <div class="flow">
+      <div class="flow-node primary">
+        <div class="ico">✎</div>
+        <div>Form submitted · High score · ICP match</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-node">
+        <div class="ico">?</div>
+        <div>Existing account in CRM?</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-split">
+        <div class="flow-node hot">
+          <div class="ico">→</div>
+          <div>Yes · Account Owner<div class="sub">instant booking link</div></div>
+        </div>
+        <div class="flow-node">
+          <div class="ico">~</div>
+          <div>No · territory + fit<div class="sub">skill based assign</div></div>
+        </div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-node primary">
+        <div class="ico">⚡</div>
+        <div>Email yourself · Task · Enrichment attached</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <span class="lbl">RULE:</span> First rep to reply wins 50%+ of deals. Routing speed is revenue.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">9</div>
+  </div>
+</div>
+
+<!-- PAGE 10: STEP 4, FORMS -->
+<div class="page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="part-label">Step 04<span> · Enrich</span></div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <h2 class="title">Kill the <span class="accent">10 field form.</span></h2>
+    <div class="subtitle">Ask 3. Enrich the rest, automatically.</div>
+
+    <div class="forms-compare">
+      <div class="form-card bad">
+        <h5>BEFORE</h5>
+        <div class="form-field">Work email</div>
+        <div class="form-field">Full name</div>
+        <div class="form-field">Company</div>
+        <div class="form-field">Job title</div>
+        <div class="form-field">Phone</div>
+        <div class="form-field">Company size</div>
+        <div class="form-field">Country</div>
+        <div class="form-field">Use case</div>
+        <div class="form-field">Budget</div>
+      </div>
+      <div class="form-card good">
+        <h5>AFTER</h5>
+        <div class="form-field">Work email</div>
+        <div class="form-field">What are you solving?</div>
+        <div class="form-field">Timeline</div>
+        <div style="height: 8px;"></div>
+        <div class="form-field filled">Full name</div>
+        <div class="form-field filled">Role</div>
+        <div class="form-field filled">Company size</div>
+        <div class="form-field filled">Industry</div>
+        <div class="form-field filled">Revenue</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <span class="lbl">IMPACT:</span> Shorter forms convert +40%. Enrichment keeps the data without the friction.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">10</div>
+  </div>
+</div>
+
+<!-- PAGE 11: STEP 5, AUTOMATE -->
+<div class="page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="part-label">Step 05<span> · Automate</span></div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <h2 class="title">Run while<br>you <span class="accent">sleep.</span></h2>
+    <div class="subtitle">Trigger · Delay · Branch · Notify.</div>
+
+    <div class="flow">
+      <div class="flow-node primary">
+        <div class="ico">⚡</div>
+        <div>Trigger · 2+ views in 15 days + ICP</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-split">
+        <div class="flow-node">
+          <div class="ico">A</div>
+          <div>AI drafts<div class="sub">context opener</div></div>
+        </div>
+        <div class="flow-node">
+          <div class="ico">H</div>
+          <div>Human finishes<div class="sub">voice + edit</div></div>
+        </div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-node hot">
+        <div class="ico">◎</div>
+        <div>If reply · book a meeting<div class="sub">if not · touch 2 + LinkedIn</div></div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <span class="lbl">MY RHYTHM:</span> Monday morning. 10 accounts. 3 touches each. One hour of human time.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">11</div>
+  </div>
+</div>
+
+<!-- PAGE 12: PART 3 DIVIDER -->
+<div class="page divider-page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <div class="divider-label">PART · 03</div>
+    <h2 class="title">
+      <span class="accent">Results.</span>
+    </h2>
+    <div class="pages-range">Pages 13, 14</div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">12</div>
+  </div>
+</div>
+
+<!-- PAGE 13: RESULTS -->
+<div class="page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="part-label">Part 3<span> · Results</span></div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <h2 class="title">When the system<br><span class="accent">compounds.</span></h2>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="num">&gt;20%</div>
+        <div class="lbl">SIGNAL TO<br>MEETING</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">1h</div>
+        <div class="lbl">WEEKLY TIME<br>PROSPECTING</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">&lt;5m</div>
+        <div class="lbl">INBOUND<br>RESPONSE</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <span class="lbl">PRINCIPLE:</span> Scale is the output. Filtering is the input. Get that order right.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">13</div>
+  </div>
+</div>
+
+<!-- PAGE 14: TAKEAWAYS -->
+<div class="page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#4E33F1"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="part-label">Part 3<span> · Results</span></div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <h2 class="title">3 things to <span class="accent">remember.</span></h2>
+
+    <div class="bullets">
+      <div class="b">
+        <div class="num">01</div>
+        <div class="b-content">
+          <h5>Signals &gt; forms</h5>
+          <p>Your pipeline is already on your site. Anonymous. Unaddressed.</p>
+        </div>
+      </div>
+      <div class="b">
+        <div class="num">02</div>
+        <div class="b-content">
+          <h5>Filter &gt; volume</h5>
+          <p>More outbound exhausts teams. Filtering keeps signal high.</p>
+        </div>
+      </div>
+      <div class="b">
+        <div class="num">03</div>
+        <div class="b-content">
+          <h5>Automation closes it</h5>
+          <p>Rules route. Enrichment fills. AI drafts. Humans close.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="swipe">SWIPE ‹‹‹</div>
+    <div class="page-num">14</div>
+  </div>
+</div>
+
+<!-- PAGE 15: CLOSE -->
+<div class="page close-page">
+  <div class="header">
+    <div class="identity">
+      <div class="avatar">KK</div>
+      <div class="name-wrap"><div class="name">Khadija Kamoun</div><svg class="verified" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 3.5L17 3l-1 4.5L20 10l-4 2.5L17 17l-4.5-.5L10 20l-2.5-3.5L3 17l1-4.5L0 10l4-2.5L3 3l4.5.5L10 0z" fill="#FFFFFF"/><path d="M7.5 10.5l1.8 1.8 3.8-4" stroke="#4E33F1" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="brand-mark"><img src="assets/apollo-mark.png" alt="Apollo.io"></div>
+  </div>
+
+  <div class="content">
+    <div class="close-tagline">GROW FASTER · CLOSE SMARTER</div>
+    <h1>
+      Stop sending<br>
+      <span class="accent">more.</span><br>
+      Start filtering<br>
+      <span class="accent">better.</span>
+    </h1>
+
+    <div class="close-subhook">
+      If this playbook landed, there's more where it came from.<br>
+      I share growth systems you can actually ship, built, tested, shipped.
+    </div>
+
+    <div class="actions">
+      <div class="action primary"><span class="arrow">♡</span>Like if this was useful</div>
+      <div class="action"><span class="arrow">+</span>Follow for more growth systems</div>
+      <div class="action"><span class="arrow">◉</span>Save so you can come back to it</div>
+    </div>
+
+    <div class="close-built">
+      <span>BUILT IN</span>
+      <img src="assets/apollo-logo-white.png" alt="Apollo.io">
+    </div>
+  </div>
+
+  <div class="close-orbit o3"></div>
+  <div class="close-orbit o1"></div>
+  <div class="close-orbit o2"></div>
+  <div class="close-planet cp1"></div>
+  <div class="close-planet cp2"></div>
+  <div class="close-planet cp3"></div>
+  <div class="close-spark cs1"></div>
+  <div class="close-spark cs2"></div>
+  <div class="close-portrait">
+    <img src="assets/close-raw.png" alt="Khadija Kamoun">
+  </div>
+
+  <div class="footer">
+    <div class="footer-pill"><div class="fp-photo"><img src="assets/khadija-photo.png" alt="K"></div><div class="fp-text"><span class="fp-l1">Khadija</span><span class="fp-l2">kamo<em>u</em>n</span></div></div>
+    <div class="page-num">15</div>
+  </div>
+</div>
+
+</body>
+</html>
