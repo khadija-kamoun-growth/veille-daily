@@ -1,0 +1,31 @@
+name: Daily Veille
+
+on:
+  schedule:
+    # 5:47 UTC = 7:47 Paris summer time (CEST, UTC+2)
+    # In winter (CET, UTC+1), this runs at 6:47 Paris. Adjust to "47 6 * * *" if needed.
+    - cron: "47 5 * * *"
+  workflow_dispatch: # allows manual trigger from GitHub UI
+
+jobs:
+  veille:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run veille + send email
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GMAIL_USER: kamoun@digigram.com
+        run: python run_veille.py
